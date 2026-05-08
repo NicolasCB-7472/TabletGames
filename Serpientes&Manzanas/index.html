@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snake Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="background-glow" aria-hidden="true"></div>
+  <main class="layout">
+    <section class="game-zone card">
+      <header class="title-row">
+        <h1>Snake Lab</h1>
+        <p>Arcade, zen y caos en una sola partida</p>
+      </header>
+
+      <div class="canvas-wrap" id="canvasWrap">
+        <canvas id="gameCanvas" width="560" height="560" aria-label="Tablero de Snake"></canvas>
+        <div id="overlay" class="overlay show">
+          <h2 id="overlayTitle">Presiona Jugar</h2>
+          <p id="overlayText">Configura el modo y empieza.</p>
+          <button id="startButton" class="btn primary">Jugar</button>
+        </div>
+      </div>
+
+      <div class="touch-controls" aria-label="Controles tactiles">
+        <button data-dir="up" class="btn ghost">Arriba</button>
+        <div class="touch-row">
+          <button data-dir="left" class="btn ghost">Izq</button>
+          <button data-dir="down" class="btn ghost">Abajo</button>
+          <button data-dir="right" class="btn ghost">Der</button>
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel card">
+      <section class="stats">
+        <h2>Estado</h2>
+        <div class="grid-stats">
+          <div><span>Puntos P1</span><strong id="scoreValue">0</strong></div>
+          <div><span>Nivel</span><strong id="levelValue">1</strong></div>
+          <div><span>Tiempo</span><strong id="timeValue">00:00</strong></div>
+          <div><span>Combo</span><strong id="comboValue">x1</strong></div>
+          <div><span>Velocidad</span><strong id="speedValue">6</strong></div>
+          <div><span>Estado</span><strong id="stateValue">Listo</strong></div>
+        </div>
+        <div id="p2StatsRow" class="p2-stats hidden">
+          <span class="p2-label">🍎 Manzana pts</span>
+          <strong id="score2Value">0</strong>
+        </div>
+      </section>
+
+      <section class="controls">
+        <h2>Ajustes</h2>
+        <label>
+          Nombre P1
+          <input id="playerName" maxlength="18" placeholder="Jugador" value="Jugador">
+        </label>
+        <label>
+          Modo
+          <select id="modeSelect">
+            <option value="classic">Classic</option>
+            <option value="zen">Zen</option>
+            <option value="chaos">Chaos</option>
+          </select>
+        </label>
+        <label>
+          Tamano tablero
+          <select id="boardSizeSelect">
+            <option value="20">20 x 20</option>
+            <option value="24" selected>24 x 24</option>
+            <option value="28">28 x 28</option>
+          </select>
+        </label>
+        <label>
+          Obstaculos iniciales
+          <input id="obstacleInput" type="number" min="0" max="40" value="4">
+        </label>
+        <label class="inline">
+          <input id="wrapToggle" type="checkbox">
+          Atravesar bordes
+        </label>
+        <label>
+          Skin P1
+          <select id="skinSelect">
+            <option value="clasico">🟢 Clasico</option>
+            <option value="neon">⚡ Neon</option>
+            <option value="fuego">🔥 Fuego</option>
+            <option value="selva">🌿 Selva</option>
+          </select>
+        </label>
+        <label>
+          Arena
+          <select id="arenaSelect">
+            <option value="default">🎮 Default</option>
+            <option value="neonka">🌸 Neonka</option>
+            <option value="electro">⚡ Electro Future</option>
+            <option value="original">🍀 Original</option>
+          </select>
+        </label>
+        <label class="inline">
+          <input id="multiPlayerToggle" type="checkbox">
+          Multijugador (2 jugadores)
+        </label>
+        <div id="p2Controls" class="p2-section hidden">
+          <label>
+            Nombre de Manzana
+            <input id="p2Name" maxlength="18" placeholder="Manzana" value="Manzana">
+          </label>
+          <label>
+            Skin de Manzana
+            <select id="skinSelectP2">
+              <option value="manzana">🍎 Manzana</option>
+              <option value="mora">🫐 Mora</option>
+            </select>
+          </label>
+          <p class="p2-hint">Controles: I ↑ &nbsp; J ← &nbsp; K ↓ &nbsp; L →</p>
+        </div>
+      </section>
+
+      <section class="actions">
+        <h2>Utilidades</h2>
+        <div class="action-row">
+          <button id="pauseButton" class="btn">Pausar</button>
+          <button id="restartButton" class="btn">Reiniciar</button>
+        </div>
+        <div class="action-row">
+          <button id="hintButton" class="btn">Sugerencia</button>
+          <button id="exportButton" class="btn">Exportar score</button>
+        </div>
+        <p id="hintText">Sugerencia: -</p>
+      </section>
+
+      <section class="music-section">
+        <h2>🎵 Musica</h2>
+        <label class="inline">
+          <input id="musicToggle" type="checkbox">
+          Activar musica
+        </label>
+        <label>
+          Pista
+          <select id="trackSelect">
+            <option value="0">Arcade Slither Loop</option>
+            <option value="1">Pixel Snake Pursuit</option>
+          </select>
+        </label>
+        <label>
+          Volumen
+          <input id="volumeSlider" type="range" min="0" max="100" value="60" class="range-input">
+        </label>
+      </section>
+
+      <section class="scores">
+        <h2>Top 5</h2>
+        <ol id="highScoreList"></ol>
+        <button id="clearScoresButton" class="btn ghost full">Limpiar ranking</button>
+      </section>
+    </aside>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
